@@ -115,12 +115,22 @@ def generar_clima():
                     rid = blip.get(f'{{{RNS}}}embed', '')
                     card_shapes.append({'name': name, 'rid': rid, 'blip': blip})
         
-        # Ordenar: Freeform 18 (card1), Freeform 32 o 51 (card2), Freeform 19 (card3)
+        # Mapeo de cards según slide_num
+        # Slide 1: Freeform 18=card1, Freeform 51=card2, Freeform 19=card3
+        # Slides 2,3,4,7: Freeform 18=card1, Freeform 32=card2, Freeform 19=card3
+        # Slides 5,6: Freeform 17=card1, Freeform 18=card2, Freeform 31=card3
+        if slide_num in [5, 6]:
+            card_names = ['Freeform 17', 'Freeform 18', 'Freeform 31']
+        elif slide_num == 1:
+            card_names = ['Freeform 18', 'Freeform 51', 'Freeform 19']
+        else:
+            card_names = ['Freeform 18', 'Freeform 32', 'Freeform 19']
+        
         card_order = {}
         for cs in card_shapes:
-            if cs['name'] == 'Freeform 18':  card_order[0] = cs
-            elif cs['name'] in ['Freeform 32', 'Freeform 51']: card_order[1] = cs
-            elif cs['name'] == 'Freeform 19': card_order[2] = cs
+            if cs['name'] in card_names:
+                idx = card_names.index(cs['name'])
+                card_order[idx] = cs
         
         # Para cada card, actualizar el rId para que apunte a la imagen correcta
         nueva_rels = rels
