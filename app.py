@@ -151,14 +151,14 @@ def generar_clima():
             sp_xml = nuevo_xml[idx_start:idx_end]
             new_sp = sp_xml.replace(f'r:embed="{cs["rid"]}"', f'r:embed="{new_rid}"', 1)
             
-            # Hacer el ícono cuadrado — usar el mínimo de cx/cy
+            # Hacer el ícono cuadrado — reemplazar <a:ext cx="X" cy="Y"/> con cuadrado
             import re as re2
-            cx_m = re2.search(r'<a:ext cx="(\d+)"', new_sp)
-            cy_m = re2.search(r'cy="(\d+)"', new_sp)
-            if cx_m and cy_m:
-                min_v = min(int(cx_m.group(1)), int(cy_m.group(1)))
-                new_sp = re2.sub(r'<a:ext cx="\d+"', f'<a:ext cx="{min_v}"', new_sp)
-                new_sp = re2.sub(r'cy="\d+"', f'cy="{min_v}"', new_sp, count=1)
+            def hacer_cuadrado(m):
+                cx_v = int(m.group(1))
+                cy_v = int(m.group(2))
+                min_v = min(cx_v, cy_v)
+                return f'<a:ext cx="{min_v}" cy="{min_v}"/>'
+            new_sp = re2.sub(r'<a:ext cx="(\d+)" cy="(\d+)"/>', hacer_cuadrado, new_sp)
             
             nuevo_xml = nuevo_xml[:idx_start] + new_sp + nuevo_xml[idx_end:]
         
