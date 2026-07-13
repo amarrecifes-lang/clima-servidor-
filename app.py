@@ -150,6 +150,16 @@ def generar_clima():
             idx_end = nuevo_xml.find('</p:sp>', idx_start)
             sp_xml = nuevo_xml[idx_start:idx_end]
             new_sp = sp_xml.replace(f'r:embed="{cs["rid"]}"', f'r:embed="{new_rid}"', 1)
+            
+            # Hacer el ícono cuadrado — usar el mínimo de cx/cy
+            import re as re2
+            cx_m = re2.search(r'<a:ext cx="(\d+)"', new_sp)
+            cy_m = re2.search(r'cy="(\d+)"', new_sp)
+            if cx_m and cy_m:
+                min_v = min(int(cx_m.group(1)), int(cy_m.group(1)))
+                new_sp = re2.sub(r'<a:ext cx="\d+"', f'<a:ext cx="{min_v}"', new_sp)
+                new_sp = re2.sub(r'cy="\d+"', f'cy="{min_v}"', new_sp, count=1)
+            
             nuevo_xml = nuevo_xml[:idx_start] + new_sp + nuevo_xml[idx_end:]
         
         with open(slide_path, 'w', encoding='utf-8') as f:
