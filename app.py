@@ -151,22 +151,9 @@ def generar_clima():
             sp_xml = nuevo_xml[idx_start:idx_end]
             new_sp = sp_xml.replace(f'r:embed="{cs["rid"]}"', f'r:embed="{new_rid}"', 1)
             
-            # Freeform 19 como card (idx==2) tiene ratio 1.40 — hacer cuadrado
-            # pero solo si es el card del pronóstico (idx==2), no el ícono principal
-            if cs['name'] == 'Freeform 19' and idx == 2:
-                import re as re2
-                # Solo el primer <a:ext> del shape (que es el tamaño del ícono)
-                first_ext = re2.search(r'<a:ext cx="(\d+)" cy="(\d+)"/>', new_sp)
-                if first_ext:
-                    cx_v = int(first_ext.group(1))
-                    cy_v = int(first_ext.group(2))
-                    if cx_v != cy_v:  # Solo si no es cuadrado
-                        min_v = min(cx_v, cy_v)
-                        new_sp = new_sp.replace(
-                            f'<a:ext cx="{cx_v}" cy="{cy_v}"/>',
-                            f'<a:ext cx="{min_v}" cy="{min_v}"/>',
-                            1  # Solo la primera ocurrencia
-                        )
+            # Freeform 19 card3 tiene ratio 1.40 — NO tocar, dejar como está
+            # El ícono se inserta con sus dimensiones originales del PPTX
+            # No necesitamos hacer nada aquí
             
             nuevo_xml = nuevo_xml[:idx_start] + new_sp + nuevo_xml[idx_end:]
         
